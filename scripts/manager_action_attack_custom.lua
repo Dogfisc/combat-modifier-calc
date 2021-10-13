@@ -651,6 +651,13 @@ function checkCanThreaten(nodeActorCT, nodeTargetCT)
 			local bEquipped = DB.getValue(nodeWeapon, 'carried', 0) == 2;
 			local bMelee = DB.getValue(nodeWeapon, 'type', 0) == 0;
 			Debug.chat(bEquipped, bMelee);
+			if bEquipped and bMelee then
+				return true;
+			end
+		end
+	else
+		return true;
+	end
 	
 end
 
