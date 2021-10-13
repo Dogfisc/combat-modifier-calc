@@ -109,8 +109,8 @@ function getRangeModifier(srcNode, rRoll, nRange)
 		-- weapon with better (or worse) range
 		for _,vWeaponNode in pairs(DB.getChildren(srcNode, "weaponlist")) do
 			local sWeaponName = DB.getValue(vWeaponNode, "name"):lower();
-			local sWeaponType = DB.getValue(vWeaponNode, "type");  -- 0 M; 1 R; 2 CMB
-			if sWeaponName == sWeaponUsed and sWeaponType == 1 then
+			local nWeaponType = DB.getValue(vWeaponNode, "type");  -- 0 M; 1 R; 2 CMB
+			if nWeaponType == 1 and (sWeaponName == sWeaponUsed) then
 				nRangeInc = DB.getValue(vWeaponNode, "rangeincrement");
 				-- Records imported from PCGen for melee weapons which can also be thrown have a
 				-- ranged attack called e.g. "Dagger (Thrown)" with no reference back to the inventory
@@ -124,13 +124,9 @@ function getRangeModifier(srcNode, rRoll, nRange)
 				local sClass, sRecordName = DB.getValue(vWeaponNode, "shortcut");
 				local vInvNode = DB.findNode(sRecordName);
 				if vInvNode ~= nil then
-					local sSubType = DB.getValue(vInvNode, "subtype");
-					if sSubType ~= nil then
-						if string.match(sSubType:lower(), "ranged") then
-							nMaxInc = 10;
-						else
-							nMaxInc = 5;
-						end
+					local sSubType = DB.getValue(vInvNode, "subtype", "");
+					if not string.match(sSubType:lower(), "ranged") then
+						nMaxInc = 5;
 					else
 						nMaxInc = 10;
 					end
