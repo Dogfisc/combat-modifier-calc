@@ -51,27 +51,11 @@ function modAttackCustom(rSource, rTarget, rRoll, ...)
 	-- Call original modAttack
 	modAttack(rSource, rTarget, rRoll, ...);
 	
-	local nodeWeaponList
-	if ActorManager.isPC(rSource) then
-		local sWeaponUsed = string.match(rRoll.sDesc, "%]([^%[]*)");
-		sWeaponUsed = StringManager.trim(sWeaponUsed):lower();
-		-- For a PC, pull the range right from their weapon entry in case of a special
-		-- weapon with better (or worse) range
-		for _,vWeaponNode in pairs(DB.getChildren(srcNode, "weaponlist")) do
-			local sWeaponName = DB.getValue(vWeaponNode, "name"):lower();
-			local nWeaponType = DB.getValue(vWeaponNode, "type");  -- 0 M; 1 R; 2 CMB
-			if nWeaponType == 1 and (sWeaponName == sWeaponUsed) then
-				nodeWeaponList = vWeaponNode
-				break;
-			end
-		end
-	end
-	
 	if sAttackType == "R" then
 		removeEffect(srcCTnode, "Flanking");
 		if rTarget ~= nil then
 			-- Check range modifier
-			local nRangeMod = getRangeModifier(srcNode, rRoll, nRange, nodeWeaponList);
+			local nRangeMod = getRangeModifier(srcNode, rRoll, nRange);
 			if nRangeMod < 0 then
 				rRoll.sDesc = rRoll.sDesc .. " " .. "[RANGE " .. nRangeMod .."]";
 				rRoll.nMod = rRoll.nMod + nRangeMod;
@@ -87,7 +71,7 @@ function modAttackCustom(rSource, rTarget, rRoll, ...)
 	elseif rTarget ~= nil then
 		-- Check and add flank modifier
 		-- Debug.chat(testTokenEdgeSquares(rSource, rTarget));
-		local bFlank = ModifierStack.getModifierKey("ATT_FLANK") or checkFlanked(rSource, srcNode, rTarget, nodeWeaponList);
+		local bFlank = ModifierStack.getModifierKey("ATT_FLANK") or checkFlanked(rSource, srcNode, rTarget);
 		if bFlank then
 			rRoll.sDesc = rRoll.sDesc .. " " .. "[FLANK +2]";
 			rRoll.nMod = rRoll.nMod + 2;
@@ -115,40 +99,45 @@ function getRangeToTarget(rSource, rTarget)
 	
 end
 
-function getRangeModifier(srcNode, rRoll, nRange, nodeWeaponList)
+function getRangeModifier(srcNode, rRoll, nRange)
 	-- Get the range penalty based on the distance to target and weapon used
 	
 	-- Get the name of the weapon being used
 	local sWeaponUsed = string.match(rRoll.sDesc, "%]([^%[]*)");
 	sWeaponUsed = StringManager.trim(sWeaponUsed):lower();
-
 	local nMaxInc = 0;
 	local nRangeInc = 0;
 	if ActorManager.isPC(srcNode) then
 		-- For a PC, pull the range right from their weapon entry in case of a special
 		-- weapon with better (or worse) range
-		nRangeInc = DB.getValue(nodeWeaponList, "rangeincrement");
-		-- Records imported from PCGen for melee weapons which can also be thrown have a
-		-- ranged attack called e.g. "Dagger (Thrown)" with no reference back to the inventory
-		-- Bolas are just a wierd case because they are "martial ranged" but thrown
-		local sWeaponName = DB.getValue(nodeWeaponList, "name"):lower();
-		if string.match(sWeaponName, "thrown") or string.match(sWeaponName, "bolas") then
-			nMaxInc = 5;
-			break;
-		elseif string.match(sWeaponName, "net") then
-			nMaxInc = 1;
-			break;
-		end
-		-- The weapon record does not include the item subtype, which we need to figure out
-		-- the maximum number of range increments.  For that, we need the inventory record.
-		local sClass, sRecordName = DB.getValue(nodeWeaponList, "shortcut");
-		local vInvNode = DB.findNode(sRecordName);
-		if vInvNode ~= nil then
-			local sSubType = DB.getValue(vInvNode, "subtype", "");
-			if not string.match(sSubType:lower(), "ranged") then
-				nMaxInc = 5;
-			else
-				nMaxInc = 10;
+		for _,vWeaponNode in pairs(DB.getChildren(srcNode, "weaponlist")) do
+			local sWeaponName = DB.getValue(vWeaponNode, "name"):lower();
+			local nWeaponType = DB.getValue(vWeaponNode, "type");  -- 0 M; 1 R; 2 CMB
+			if nWeaponType == 1 and (sWeaponName == sWeaponUsed) then
+				nRangeInc = DB.getValue(vWeaponNode, "rangeincrement");
+				-- Records imported from PCGen for melee weapons which can also be thrown have a
+				-- ranged attack called e.g. "Dagger (Thrown)" with no reference back to the inventory
+				-- Bolas are just a wierd case because they are "martial ranged" but thrown
+				if string.match(sWeaponName, "thrown") or string.match(sWeaponName, "bolas") then
+					nMaxInc = 5;
+					break;
+				elseif string.match(sWeaponName, "net") then
+					nMaxInc = 1;
+					break;
+				end
+				-- The weapon record does not include the item subtype, which we need to figure out
+				-- the maximum number of range increments.  For that, we need the inventory record.
+				local sClass, sRecordName = DB.getValue(vWeaponNode, "shortcut");
+				local vInvNode = DB.findNode(sRecordName);
+				if vInvNode ~= nil then
+					local sSubType = DB.getValue(vInvNode, "subtype", "");
+					if not string.match(sSubType:lower(), "ranged") then
+						nMaxInc = 5;
+					else
+						nMaxInc = 10;
+					end
+				end
+				break;
 			end
 		end
 	else
@@ -314,7 +303,7 @@ function getClosestTargetSquare(rTarget, srcToken, tgtToken, tgtSpace, tgtImage)
 	
 end
 
-function checkFlanked(rSource, srcNode, rTarget, nodeWeaponList)
+function checkFlanked(rSource, srcNode, rTarget)
 	-- Return true if the rSource is flanking the rTarget
 	-- Does not account for the use of weapons with Reach
 	
@@ -364,11 +353,6 @@ function checkFlanked(rSource, srcNode, rTarget, nodeWeaponList)
 					-- Is this square of the threat token actually a threat?
 					local rThrCT = CombatManager.getCTFromToken(tknThreat);
 					local nThrReach = DB.getValue(ActorManager.getCTNode(rThrCT), "reach");
-					if ActorManager.isPC(ActorManager.resolveActor(rThrCT)) then
-						if string.match(DB.getValue(nodeWeaponList, "", ""), "reach") then
-							nThrReach = nThrReach + 5
-						end
-					end
 					local nThrRange = srcImage.getDistanceBetween({x = thrCoord.x, y = thrCoord.y * -1}, tgtToken);
 					if nThrReach >= nThrRange then
 						-- y = mx + b
@@ -414,9 +398,7 @@ function checkFlanked(rSource, srcNode, rTarget, nodeWeaponList)
 			end
 		end
 	end
-	
 	return bFlanked;
-	
 end
 
 function checkCanBeFlanked(rSource, rTarget)
