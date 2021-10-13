@@ -26,7 +26,7 @@
 		<includefile source="gameelements.xml" />
 		<includefile source="utility/utility_modifiers.xml" />
 		<includefile source="strings/strings.xml" />
-		<script name="ActionAttackCustom" file="scripts/manager_action_attack_custom.lua" />
-		<script name="DataCommonCustom" file="scripts/data_common_custom.lua" />
+		<script name="ActionAttackCMC" file="scripts/manager_action_attack_custom.lua" />
+		<script name="DataCommonCMC" file="scripts/data_common_custom.lua" />
 	</base>
 </root>
