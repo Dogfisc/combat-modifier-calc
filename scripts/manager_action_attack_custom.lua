@@ -142,11 +142,11 @@ function getRangeModifier(srcNode, rRoll, nRange)
 	else
 		-- For an NPC, get the standard range data for the weapon type
 		-- Check for a match against the weapon data
-		local tWeaponRangeData = DataCommonCustom.weaponranges[sWeaponUsed];
+		local tWeaponRangeData = DataCommonCMC.weaponranges[sWeaponUsed];
 		if tWeaponRangeData == nil then
 			-- It wasn't found; check for a match vs each entry in the
 			-- data table in case this weapon has additional words (Mwk, silver, etc.)
-			for sWeaponName, tWeaponRangeData in pairs(DataCommonCustom.weaponranges) do
+			for sWeaponName, tWeaponRangeData in pairs(DataCommonCMC.weaponranges) do
 				if string.match(sWeaponUsed, sWeaponName) then
 					nRangeInc = tWeaponRangeData[1];
 					nMaxInc = tWeaponRangeData[2];
