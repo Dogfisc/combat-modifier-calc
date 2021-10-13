@@ -642,7 +642,15 @@ function checkCanThreaten(nodeActorCT, nodeTargetCT)
 		end
 	end
 	
-	return true;
+	-- Melee weapon check
+	local rActorCT = ActorManager.resolveActor(nodeActorCT);
+	local nodeActor = ActorManager.getCreatureNode(nodeActorCT);
+	Debug.chat(nodeActor);
+	if ActorManager.isPC(rActorCT) then
+		for _,nodeWeapon in pairs(nodeActor.getChild('.weaponlist').getChildren()) do
+			local bEquipped = DB.getValue(nodeWeapon, 'carried', 0) == 2;
+			local bMelee = DB.getValue(nodeWeapon, 'type', 0) == 0;
+			Debug.chat(bEquipped, bMelee);
 	
 end
 
