@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+  Please see the license.txt file included with this distribution for 
+  attribution and copyright information.
+-->
+
+<root>
+	<!-- Modifiers -->
+	<string name="modifier_label_atkflank">Flank</string>
+	<string name="modifier_label_atkmelee">Melee</string>
+</root>
