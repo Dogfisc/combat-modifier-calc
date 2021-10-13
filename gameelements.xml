@@ -9,57 +9,37 @@
 	<die name="gmdie">
 		<icon>gmdieicon</icon>
 	</die>
-	<die name="dF">
-		<icon>d6icon</icon>
-		 <position>-120,-68</position>
-	</die>
-	<die name="d4">
-		<icon>d4icon</icon>
-		<position>750,-68</position>
-	</die>
-	<die name="d6">
-		<icon>d6icon</icon>
-		<position>700,-68</position>
-	</die>
-	<die name="d8">
-		<icon>d8icon</icon>
-		<position>650,-68</position>
-	</die>
-	<die name="d10">
-		<icon>d10icon</icon>
-		<position>600,-68</position>
+	<die name="d20">
+		<icon>d20icon</icon>
+		<position>410,-68</position>
+		<!-- <position>500,-68</position> -->
 	</die>
 	<die name="d12">
 		<icon>d12icon</icon>
-		<position>550,-68</position>		
+		<position>460,-68</position>
 	</die>
-	<die name="d20">
-		<icon>d20icon</icon>
-		<position>500,-68</position>		
+	<die name="d10">
+		<icon>d10icon</icon>
+		<position>510,-68</position>
+	</die>
+	<die name="d8">
+		<icon>d8icon</icon>
+		<position>560,-68</position>
+	</die>
+	<die name="d6">
+		<icon>d6icon</icon>
+		<position>610,-68</position>
+	</die>
+	<die name="d4">
+		<icon>d4icon</icon>
+		<position>660,-68</position>
 	</die>
 	<die name="d100">
 		<icon>d10icon</icon>
-		<position>950,-68</position>		
+		<position>710,-68</position>
 	</die>
-<!--
- <panel name="dicetower" modes="host,client">
-		<class>dicetower</class>
-		<bounds>
-			<anchored>
-				<bottom>
-					<anchor>bottom</anchor>
-					<offset>-33</offset>
-				</bottom>
-				<right>
-					<anchor>left</anchor>
-					<offset>620</offset>
-				</right>
-				<size>
-					<width>90</width>
-					<height>90</height>
-				</size>
-			</anchored>
-		</bounds>
-	</panel>
- -->
+	<die name="dF">
+		<icon>d6icon</icon>
+		 <position>760,-68</position>
+	</die>
 </root>
