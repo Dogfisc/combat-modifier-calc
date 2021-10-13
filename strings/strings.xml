@@ -9,4 +9,6 @@
 	<!-- Modifiers -->
 	<string name="modifier_label_atkflank">Flank</string>
 	<string name="modifier_label_atkmelee">Melee</string>
+	<!-- Options -->
+	<string name="opt_lab_autoflank">Automatic Flanking</string>
 </root>

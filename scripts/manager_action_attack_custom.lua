@@ -6,6 +6,9 @@
 function onInit()
 	ActionsManager.registerModHandler("attack", modAttackCustom);
 	ActionsManager.registerModHandler("grapple", modAttackCustom);
+	
+	OptionsManager.registerOption2('AUTO_FLANK', false, 'option_header_game', 'opt_lab_autoflank', 'option_entry_cycler', 
+		{ labels = 'option_val_off', values = 'off', baselabel = 'option_val_on', baseval = 'on', default = 'on' })
 end
 
 function modAttackCustom(rSource, rTarget, rRoll)
@@ -305,91 +308,91 @@ function checkFlanked(rSource, srcNode, rTarget)
 	-- Creatures with a reach of 0 feet can’t flank an opponent.
 	
 	local bFlanked = false;
-	
-	-- Some creatures can't be flanked; some can be flanked (for purposes of Sneak Attack) but
-	-- ignore the +2 bonus
-	local bIgnoreFlank, bIgnoreBonus = checkCanBeFlanked(rSource, rTarget);
-	if bIgnoreFlank then
-		return false;
-	end
-	
-	-- are we on a gridded map?
-	local srcToken, tgtToken, srcImage, tgtImage = getTokensMaps(rSource, rTarget);
-	if srcToken == nil then
-		return false;
-	end
-	
-	-- Get all tokens threatening rTarget in the same faction as rSource
-	local tThreats = getMeleeThreats(srcToken, tgtToken, DB.getValue(ActorManager.getCTNode(rSource), "friendfoe"));
-	
-	-- Get the upper/lower Y and left/right X values of rTarget's edges
-	local tTgtBnd = getTokenBounds(rTarget, tgtToken, tgtImage);
-	
-	-- Get the coordinate of target's center
-	-- local tgtX, tgtY = tgtToken.getPosition();
-	local tgtX = (tTgtBnd.left + tTgtBnd.right) / 2;
-	local tgtY = (tTgtBnd.top + tTgtBnd.bottom) / 2;
-	
-	-- Get the squares around the edge of rSource
-	local tSrcEdge = getTokenEdgeSquares(rSource, srcToken, srcImage);
-	
-	for _, tknThreat in pairs(tThreats) do
-		-- Get edge squares of tknThreat
-		local tThrEdge = getTokenEdgeSquares(CombatManager.getCTFromToken(tknThreat), tknThreat, srcImage);
-		
-		-- Compare the line from each source edge to each threat edge
-		for _, srcCoord in pairs(tSrcEdge) do
-			for _, thrCoord in pairs(tThrEdge) do
-				-- Is this square of the threat token actually a threat?
-				local rThrCT = CombatManager.getCTFromToken(tknThreat);
-				local nThrReach = DB.getValue(ActorManager.getCTNode(rThrCT), "reach");
-				local nThrRange = srcImage.getDistanceBetween({x = thrCoord.x, y = thrCoord.y * -1}, tgtToken);
-				if nThrReach >= nThrRange then
-					-- y = mx + b
-					-- m = slope = delta Y / delta X
-					local slope = (srcCoord.y - thrCoord.y) / (srcCoord.x - thrCoord.x)
-					-- b = Y intercept = y - mx
-					local yInt = srcCoord.y - (slope * srcCoord.x);
-					
-					-- Figure out the Y value where the line intersects left/right target bounds and
-					-- the X value where the line intersects top/bottom target bounds
-					local tInt = {
-						left = slope * tTgtBnd.left + yInt,  -- y = mx + b
-						right = slope * tTgtBnd.right + yInt,  -- y = mx + b
-						top = (tTgtBnd.top - yInt) / slope,  -- x = (y - b) / m
-						bottom = (tTgtBnd.bottom - yInt) / slope  -- x = (y - b) / m
-					}
-					-- Lines that are straight up (srcCoord.x = thrCoord.x) require special handling
-					if srcCoord.x == thrCoord.x then
-						tInt.top = srcCoord.x;
-						tInt.bottom = srcCoord.x;
-					end
-					-- If the line intersects both top and bottom between the left and right bounds,
-					-- or both left and right between the top and bottom bounds, then it's a flank
-					-- Must also be on opposite sides of the target
-					if tInt.left >= tTgtBnd.top and tInt.left <= tTgtBnd.bottom and tInt.right >= tTgtBnd.top and tInt.right <= tTgtBnd.bottom then
-						-- Line intersects both target's left and right between target's top and bottom
-						if (srcCoord.x < tgtX and thrCoord.x > tgtX) or
-						   (srcCoord.x > tgtX and thrCoord.x < tgtX) then
-						   -- target is between source and threat
-							return true;
+
+	if OptionsManager.isOption('AUTO_FLANK', 'on') then
+		-- Some creatures can't be flanked; some can be flanked (for purposes of Sneak Attack) but
+		-- ignore the +2 bonus
+		local bIgnoreFlank, bIgnoreBonus = checkCanBeFlanked(rSource, rTarget);
+		if bIgnoreFlank then
+			return false;
+		end
+
+		-- are we on a gridded map?
+		local srcToken, tgtToken, srcImage, tgtImage = getTokensMaps(rSource, rTarget);
+		if srcToken == nil then
+			return false;
+		end
+
+		-- Get all tokens threatening rTarget in the same faction as rSource
+		local tThreats = getMeleeThreats(srcToken, tgtToken, DB.getValue(ActorManager.getCTNode(rSource), "friendfoe"));
+
+		-- Get the upper/lower Y and left/right X values of rTarget's edges
+		local tTgtBnd = getTokenBounds(rTarget, tgtToken, tgtImage);
+
+		-- Get the coordinate of target's center
+		-- local tgtX, tgtY = tgtToken.getPosition();
+		local tgtX = (tTgtBnd.left + tTgtBnd.right) / 2;
+		local tgtY = (tTgtBnd.top + tTgtBnd.bottom) / 2;
+
+		-- Get the squares around the edge of rSource
+		local tSrcEdge = getTokenEdgeSquares(rSource, srcToken, srcImage);
+
+		for _, tknThreat in pairs(tThreats) do
+			-- Get edge squares of tknThreat
+			local tThrEdge = getTokenEdgeSquares(CombatManager.getCTFromToken(tknThreat), tknThreat, srcImage);
+
+			-- Compare the line from each source edge to each threat edge
+			for _, srcCoord in pairs(tSrcEdge) do
+				for _, thrCoord in pairs(tThrEdge) do
+					-- Is this square of the threat token actually a threat?
+					local rThrCT = CombatManager.getCTFromToken(tknThreat);
+					local nThrReach = DB.getValue(ActorManager.getCTNode(rThrCT), "reach");
+					local nThrRange = srcImage.getDistanceBetween({x = thrCoord.x, y = thrCoord.y * -1}, tgtToken);
+					if nThrReach >= nThrRange then
+						-- y = mx + b
+						-- m = slope = delta Y / delta X
+						local slope = (srcCoord.y - thrCoord.y) / (srcCoord.x - thrCoord.x)
+						-- b = Y intercept = y - mx
+						local yInt = srcCoord.y - (slope * srcCoord.x);
+
+						-- Figure out the Y value where the line intersects left/right target bounds and
+						-- the X value where the line intersects top/bottom target bounds
+						local tInt = {
+							left = slope * tTgtBnd.left + yInt,  -- y = mx + b
+							right = slope * tTgtBnd.right + yInt,  -- y = mx + b
+							top = (tTgtBnd.top - yInt) / slope,  -- x = (y - b) / m
+							bottom = (tTgtBnd.bottom - yInt) / slope  -- x = (y - b) / m
+						}
+						-- Lines that are straight up (srcCoord.x = thrCoord.x) require special handling
+						if srcCoord.x == thrCoord.x then
+							tInt.top = srcCoord.x;
+							tInt.bottom = srcCoord.x;
 						end
-					end
-					if tInt.top <= tTgtBnd.right and tInt.top >= tTgtBnd.left and tInt.bottom <= tTgtBnd.right and tInt.bottom >= tTgtBnd.left then
-						-- Line intersects both target's top and bottom between target's left and right
-						if (srcCoord.y < tgtY and thrCoord.y > tgtY) or
-						   (srcCoord.y > tgtY and thrCoord.y < tgtY) then
-						   -- target is between source and threat
-							return true;
+						-- If the line intersects both top and bottom between the left and right bounds,
+						-- or both left and right between the top and bottom bounds, then it's a flank
+						-- Must also be on opposite sides of the target
+						if tInt.left >= tTgtBnd.top and tInt.left <= tTgtBnd.bottom and tInt.right >= tTgtBnd.top and tInt.right <= tTgtBnd.bottom then
+							-- Line intersects both target's left and right between target's top and bottom
+							if (srcCoord.x < tgtX and thrCoord.x > tgtX) or
+							   (srcCoord.x > tgtX and thrCoord.x < tgtX) then
+							   -- target is between source and threat
+								return true;
+							end
+						end
+						if tInt.top <= tTgtBnd.right and tInt.top >= tTgtBnd.left and tInt.bottom <= tTgtBnd.right and tInt.bottom >= tTgtBnd.left then
+							-- Line intersects both target's top and bottom between target's left and right
+							if (srcCoord.y < tgtY and thrCoord.y > tgtY) or
+							   (srcCoord.y > tgtY and thrCoord.y < tgtY) then
+							   -- target is between source and threat
+								return true;
+							end
 						end
 					end
 				end
 			end
 		end
 	end
-	
 	return bFlanked;
-	
 end
 
 function checkCanBeFlanked(rSource, rTarget)
