@@ -402,7 +402,7 @@ function checkCanBeFlanked(rSource, rTarget)
 	--		true if rTarget can be flanked (for sneak attack) but ignores the +2 bonus (e.g. Formians)
 	
 	local bIgnoreFlank, bIgnoreBonus = false, true;
-	local bTgtPC = ActorManager.isPC(rTarget)
+	local bTgtPC = ActorManager.isPC(rTarget);
 	
 	-- subtype "swarm"
 	if bTgtPC == false then
