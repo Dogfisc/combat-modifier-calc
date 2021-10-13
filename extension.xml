@@ -9,7 +9,7 @@
 
 	<properties>
 		<name>Combat Modifier Calculation</name>
-		<version>1.0</version>
+		<version>1.6</version>
 		<author>dogfisc</author>
 		<description>Extension</description>
 		<ruleset>
@@ -21,7 +21,7 @@
 		<loadorder>100</loadorder>
 	</properties>
 
-	<announcement text="Combat Modifier Calculation v1.0\nAutomatically calculate modifiers for flanking, range, and shooting into melee" font="emotefont" />
+	<announcement text="Combat Modifier Calculation v1.6\nAutomatically calculate modifiers for flanking, range, and shooting into melee" font="emotefont" />
 
 	<base>
 		<includefile source="desktop/desktop_classes.xml" />
