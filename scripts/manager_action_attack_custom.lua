@@ -548,11 +548,12 @@ function getTokenBounds(rActor, theToken, tknImage)
 	local tgtSide = tgtSpace / nGrid;  -- number of squares per side of the target token
 	
 	return {
-		["top"]    = tgtY - (tgtSide / 2) * nGridSize;
-		["bottom"] = tgtY + (tgtSide / 2) * nGridSize;
-		["left"]   = tgtX - (tgtSide / 2) * nGridSize;
-		["right"]  = tgtX + (tgtSide / 2) * nGridSize};
-	
+			["top"]    = tgtY - (tgtSide / 2) * nGridSize;
+			["bottom"] = tgtY + (tgtSide / 2) * nGridSize;
+			["left"]   = tgtX - (tgtSide / 2) * nGridSize;
+			["right"]  = tgtX + (tgtSide / 2) * nGridSize;
+		};
+
 end
 
 function getTokensMaps(rSource, rTarget)
@@ -652,6 +653,7 @@ function npcHasFeat(ctNode, sFeat)
 	local sLowerFeat = StringManager.trim(string.lower(sFeat));
 	local sFeatList = DB.getValue(ctNode, "feats");
 	local sLowerFeatList = StringManager.trim(string.lower(sFeatList));
+
 	return string.match(sLowerFeatList, sLowerFeat);
 	
 end
@@ -661,6 +663,7 @@ function npcHasSQ(ctNode, sQuality)
 	local sLowerQuality = StringManager.trim(string.lower(sQuality));
 	local sQualityList = DB.getValue(ctNode, "specialqualities");
 	local sLowerQualityList = StringManager.trim(string.lower(sQualityList));
+
 	return string.match(sLowerQualityList, sLowerQuality);
 	
 end
@@ -710,6 +713,7 @@ function hasEffect(nodeCT, sEffect)
 			end
 		end
 	end
+
 	return false;
 	
 end
