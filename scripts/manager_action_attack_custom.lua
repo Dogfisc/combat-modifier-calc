@@ -134,21 +134,21 @@ function getRangeModifier(srcNode, rRoll, nRange, nodeWeaponList)
 		local sWeaponName = DB.getValue(nodeWeaponList, "name"):lower();
 		if string.match(sWeaponName, "thrown") or string.match(sWeaponName, "bolas") then
 			nMaxInc = 5;
+			break;
 		elseif string.match(sWeaponName, "net") then
 			nMaxInc = 1;
+			break;
 		end
-		if nMaxInc == 0 then
-			-- The weapon record does not include the item subtype, which we need to figure out
-			-- the maximum number of range increments.  For that, we need the inventory record.
-			local sClass, sRecordName = DB.getValue(nodeWeaponList, "shortcut");
-			local vInvNode = DB.findNode(sRecordName);
-			if vInvNode ~= nil then
-				local sSubType = DB.getValue(vInvNode, "subtype", "");
-				if not string.match(sSubType:lower(), "ranged") then
-					nMaxInc = 5;
-				else
-					nMaxInc = 10;
-				end
+		-- The weapon record does not include the item subtype, which we need to figure out
+		-- the maximum number of range increments.  For that, we need the inventory record.
+		local sClass, sRecordName = DB.getValue(nodeWeaponList, "shortcut");
+		local vInvNode = DB.findNode(sRecordName);
+		if vInvNode ~= nil then
+			local sSubType = DB.getValue(vInvNode, "subtype", "");
+			if not string.match(sSubType:lower(), "ranged") then
+				nMaxInc = 5;
+			else
+				nMaxInc = 10;
 			end
 		end
 	else
@@ -365,7 +365,7 @@ function checkFlanked(rSource, srcNode, rTarget, nodeWeaponList)
 					local rThrCT = CombatManager.getCTFromToken(tknThreat);
 					local nThrReach = DB.getValue(ActorManager.getCTNode(rThrCT), "reach");
 					if ActorManager.isPC(ActorManager.resolveActor(rThrCT)) then
-						if string.match(DB.getValue(nodeWeaponList, "properties", ""), "reach") then
+						if string.match(DB.getValue(nodeWeaponList, "", ""), "reach") then
 							nThrReach = nThrReach + 5
 						end
 					end
