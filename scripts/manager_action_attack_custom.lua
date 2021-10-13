@@ -644,11 +644,13 @@ function checkCanThreaten(nodeActorCT, nodeTargetCT)
 	end
 	
 	-- Melee weapon check
+	-- There should be some check here for the snap shot feat
+	-- https://www.aonprd.com/FeatDisplay.aspx?ItemName=Snap%20Shot
 	local rActorCT = ActorManager.resolveActor(nodeActorCT);
 	local nodeActor = ActorManager.getCreatureNode(nodeActorCT);
 	if ActorManager.isPC(rActorCT) then
 		for _,nodeWeapon in pairs(nodeActor.getChild('.weaponlist').getChildren()) do
-			if DB.getValue(nodeWeapon, 'carried', 0) == 2 and DB.getValue(nodeWeapon, 'type', 0) == 0 then
+			if (DB.getValue(nodeWeapon, 'carried', 0) == 2) and (DB.getValue(nodeWeapon, 'type', 0) == 0) then
 				return true;
 			end
 		end
