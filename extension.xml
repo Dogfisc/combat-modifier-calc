@@ -20,7 +20,9 @@
 		</ruleset>
 		<loadorder>100</loadorder>
 	</properties>
-	<announcement text="Combat Modifier Calculation:  Automatically calculate modifiers for flanking, range, and shooting into melee" font="emotefont" />
+
+	<announcement text="Combat Modifier Calculation v1.0\nAutomatically calculate modifiers for flanking, range, and shooting into melee" font="emotefont" />
+
 	<base>
 		<includefile source="desktop/desktop_classes.xml" />
 		<includefile source="gameelements.xml" />
