@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+  Please see the license.html file included with this distribution for 
+  attribution and copyright information.
+-->
+
+<root version="1.0" release="1">
+
+	<properties>
+		<name>Combat Modifier Calculation</name>
+		<version>1.0</version>
+		<author>dogfisc</author>
+		<description>Extension</description>
+		<ruleset>
+			<name>PFRPG</name>
+		</ruleset>
+		<ruleset>
+			<name>3.5E</name>
+		</ruleset>
+		<loadorder>100</loadorder>
+	</properties>
+	<announcement text="Combat Modifier Calculation:  Automatically calculate modifiers for flanking, range, and shooting into melee" font="emotefont" />
+	<base>
+		<includefile source="desktop/desktop_classes.xml" />
+		<includefile source="gameelements.xml" />
+		<includefile source="utility/utility_modifiers.xml" />
+		<includefile source="strings/strings.xml" />
+		<script name="ActionAttackCustom" file="scripts/manager_action_attack_custom.lua" />
+		<script name="DataCommonCustom" file="scripts/data_common_custom.lua" />
+	</base>
+</root>
