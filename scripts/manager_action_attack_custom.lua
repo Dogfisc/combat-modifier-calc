@@ -10,8 +10,11 @@ function onInit()
 
 	ActionsManager.registerModHandler("attack", modAttackCustom);
 	ActionsManager.registerModHandler("grapple", modAttackCustom);
-	
-	OptionsManager.registerOption2('AUTO_FLANK', false, 'option_header_game', 'opt_lab_autoflank', 'option_entry_cycler', 
+
+	table.insert(DataCommon.immunetypes, "flanking")
+	table.insert(DataCommon.dmgtypes, "flanking")
+
+	OptionsManager.registerOption2('AUTO_FLANK', false, 'option_header_game', 'opt_lab_autoflank', 'option_entry_cycler',
 		{ labels = 'option_val_off', values = 'off', baselabel = 'option_val_on', baseval = 'on', default = 'on' })
 end
 
@@ -117,6 +120,9 @@ function getRangeModifier(srcNode, rRoll, nRange)
 				-- Bolas are just a wierd case because they are "martial ranged" but thrown
 				if string.match(sWeaponName, "thrown") or string.match(sWeaponName, "bolas") then
 					nMaxInc = 5;
+					break;
+				elseif string.match(sWeaponName, "net") then
+					nMaxInc = 1;
 					break;
 				end
 				-- The weapon record does not include the item subtype, which we need to figure out
@@ -417,8 +423,12 @@ function checkCanBeFlanked(rSource, rTarget)
 	-- "all-around vision" in "Senses" (Pathfinder Bestiary 2 Universal Monster Rules)
 	
 	-- "Immune ... flanking" in "SQ"
-	
-	-- "IMMUNE: ... flanking" effect
+	-- is converted to IMMUNE: flanking by adding "flanking" to DataCommon.immunetypes and DataCommon.dmgtypes.
+	-- "IMMUNE: ... flanking" effect is automated here
+	local aImmune = EffectManager35E.getEffectsBonusByType(rTarget, "IMMUNE", false, {}, rSource);
+	if aImmune["flanking"] then
+		return true, false;
+	end
 	
 	-- wearing Robe of Eyes or Ring of Eyes
 	
