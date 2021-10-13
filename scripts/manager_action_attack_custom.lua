@@ -24,7 +24,7 @@ function modAttackCustom(rSource, rTarget, rRoll)
 	-- This needs to be done before modAttack so that the effect
 	-- is correctly applied to the current roll
 	if rTarget ~= nil and sAttackType == "R" and nRange <= 30 and nRange >= 0 then
-		if hasFeat(srcNode, "Point Blank Shot") then
+		if hasFeat(srcNode, "Point Blank Shot") or hasFeat(srcNode, "Point-Blank Shot") then
 			-- Point blank and has feat
 			-- addEffect("", "", srcCTnode, {sName = "PBS; rng30; ATK: 1 ranged; DMG: 1 ranged; DMGS: 1"}, false);
 			addEffect(rSource, {sName = "PBS; rng30; ATK: 1 ranged; DMG: 1 ranged; DMGS: 1"});
