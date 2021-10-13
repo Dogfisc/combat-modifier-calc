@@ -8,7 +8,7 @@
 <root>
 
 	<windowclass name="modifierstack" merge="join">
-		<sheetdata>
+				<sheetdata>
 
 			<button_modifierkey name="DEF_PCOVER">
 				<bounds>80,4,40,20</bounds>
