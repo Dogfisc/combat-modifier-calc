@@ -3,7 +3,11 @@
 -- attribution and copyright information.
 --
 
+
 function onInit()
+	modAttack = ActionAttack.modAttack
+	ActionAttack.modAttack = modAttackCustom
+
 	ActionsManager.registerModHandler("attack", modAttackCustom);
 	ActionsManager.registerModHandler("grapple", modAttackCustom);
 	
@@ -11,7 +15,8 @@ function onInit()
 		{ labels = 'option_val_off', values = 'off', baselabel = 'option_val_on', baseval = 'on', default = 'on' })
 end
 
-function modAttackCustom(rSource, rTarget, rRoll)
+local modAttack
+function modAttackCustom(rSource, rTarget, rRoll, ...)
 	
 	-- Debug.chat("rSource:  ", rSource);
 	-- Debug.chat("rTarget:  ", rTarget);
@@ -27,7 +32,7 @@ function modAttackCustom(rSource, rTarget, rRoll)
 	-- This needs to be done before modAttack so that the effect
 	-- is correctly applied to the current roll
 	if rTarget ~= nil and sAttackType == "R" and nRange <= 30 and nRange >= 0 then
-		if hasFeat(srcNode, "Point Blank Shot") then
+		if hasFeat(srcNode, "Point Blank Shot") or hasFeat(srcNode, "Point-Blank Shot") then
 			-- Point blank and has feat
 			-- addEffect("", "", srcCTnode, {sName = "PBS; rng30; ATK: 1 ranged; DMG: 1 ranged; DMGS: 1"}, false);
 			addEffect(rSource, {sName = "PBS; rng30; ATK: 1 ranged; DMG: 1 ranged; DMGS: 1"});
@@ -42,7 +47,7 @@ function modAttackCustom(rSource, rTarget, rRoll)
 	end
 	
 	-- Call original modAttack
-	ActionAttack.modAttack(rSource, rTarget, rRoll);
+	modAttack(rSource, rTarget, rRoll, ...);
 	
 	if sAttackType == "R" then
 		removeEffect(srcCTnode, "Flanking");
