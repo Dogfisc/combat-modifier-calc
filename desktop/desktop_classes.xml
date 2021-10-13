@@ -96,13 +96,6 @@
 				<textres>modifier_label_dmgcrit</textres>
 				<state><tooltip>next damage roll counts as critical damage</tooltip></state>
 			</button_modifierkey>
-
-			<button_modifierkey name="DMG_HALF">
-				<bounds>380,4,40,20</bounds>
-				<textres>modifier_label_dmghalf</textres>
-				<state><tooltip>next roll does half damage</tooltip></state>
-			</button_modifierkey>
-
 			<button_modifierkey name="DEF_MELEE">
 				<bounds>80,36,40,20</bounds>
 				<textres>modifier_label_atkmelee</textres>
@@ -131,6 +124,11 @@
 				<bounds>280,36,40,20</bounds>
 				<textres>modifier_label_atktouch</textres>
 				<state><tooltip>Touch Attack</tooltip></state>
+			</button_modifierkey>
+			<button_modifierkey name="DMG_HALF">
+				<bounds>330,36,40,20</bounds>
+				<textres>modifier_label_dmghalf</textres>
+				<state><tooltip>next roll does half damage</tooltip></state>
 			</button_modifierkey>
 		</sheetdata>
 	</windowclass>
