@@ -3,12 +3,17 @@
 -- attribution and copyright information.
 --
 
+
 function onInit()
+	modAttack = ActionAttack.modAttack
+	ActionAttack.modAttack = modAttackCustom
+
 	ActionsManager.registerModHandler("attack", modAttackCustom);
 	ActionsManager.registerModHandler("grapple", modAttackCustom);
 end
 
-function modAttackCustom(rSource, rTarget, rRoll)
+local modAttack
+function modAttackCustom(rSource, rTarget, rRoll, ...)
 	
 	-- Debug.chat("rSource:  ", rSource);
 	-- Debug.chat("rTarget:  ", rTarget);
@@ -39,7 +44,7 @@ function modAttackCustom(rSource, rTarget, rRoll)
 	end
 	
 	-- Call original modAttack
-	ActionAttack.modAttack(rSource, rTarget, rRoll);
+	modAttack(rSource, rTarget, rRoll, ...);
 	
 	if sAttackType == "R" then
 		removeEffect(srcCTnode, "Flanking");
