@@ -16,7 +16,9 @@
 				<state><tooltip>Partial Cover -2</tooltip></state>
 				<script>
 					function onValueChanged()
-						super.onValueChanged();
+						if super and super.onValueChanged then
+							super.onValueChanged();
+						end
 						if getValue() == 1 then
 							window["DEF_COVER"].setValue(0);
 							window["DEF_SCOVER"].setValue(0);
@@ -31,7 +33,9 @@
 				<state><tooltip>Cover or Soft Cover -4</tooltip></state>
 				<script>
 					function onValueChanged()
-						super.onValueChanged();
+						if super and super.onValueChanged then
+							super.onValueChanged();
+						end
 						if getValue() == 1 then
 							window["DEF_PCOVER"].setValue(0);
 							window["DEF_SCOVER"].setValue(0);
@@ -46,7 +50,9 @@
 				<state><tooltip>Superior Cover -8</tooltip></state>
 				<script>
 					function onValueChanged()
-						super.onValueChanged();
+						if super and super.onValueChanged then
+							super.onValueChanged();
+						end
 						if getValue() == 1 then
 							window["DEF_PCOVER"].setValue(0);
 							window["DEF_COVER"].setValue(0);
@@ -61,8 +67,9 @@
 				<textres>modifier_label_atkconc</textres>
 				<script>
 					function onValueChanged()
-						super.onValueChanged();
-						
+						if super and super.onValueChanged then
+							super.onValueChanged();
+						end
 						if getValue() == 1 then
 							window["DEF_TCONC"].setValue(0);
 						end
@@ -75,8 +82,9 @@
 				<textres>modifier_label_atktconc</textres>
 				<script>
 					function onValueChanged()
-						super.onValueChanged();
-						
+						if super and super.onValueChanged then
+							super.onValueChanged();
+						end
 						if getValue() == 1 then
 							window["DEF_CONC"].setValue(0);
 						end
