@@ -3,7 +3,7 @@
 -- attribution and copyright information.
 --
 
-
+local modAttack
 function onInit()
 	modAttack = ActionAttack.modAttack
 	ActionAttack.modAttack = modAttackCustom
@@ -15,7 +15,6 @@ function onInit()
 		{ labels = 'option_val_off', values = 'off', baselabel = 'option_val_on', baseval = 'on', default = 'on' })
 end
 
-local modAttack
 function modAttackCustom(rSource, rTarget, rRoll, ...)
 	
 	-- Debug.chat("rSource:  ", rSource);
