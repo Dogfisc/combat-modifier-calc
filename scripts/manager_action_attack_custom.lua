@@ -609,25 +609,25 @@ function hasFeat(actorNode, sFeat)
 	
 end
 
-function checkCanThreaten(rActorCT, rTargetCT)
+function checkCanThreaten(nodeActorCT, nodeTargetCT)
 	-- Returns true if the rActorCT can threaten enemies in melee;
 	-- false if they have a status or effect which renders them unable to do so or
 	-- they are unable to see the target
 	
 	-- Actor conditions
-	if EffectManager35E.hasEffectCondition(rActorCT, "Unconscious") or
-		EffectManager35E.hasEffectCondition(rActorCT, "Incapacitated") or
-		EffectManager35E.hasEffectCondition (rActorCT, "Paralyzed") or
-		EffectManager35E.hasEffectCondition(rActorCT, "Petrified") or
-		EffectManager35E.hasEffectCondition(rActorCT, "Stunned") or
-		EffectManager35E.hasEffectCondition(rActorCT, "Helpless") then
+	if EffectManager35E.hasEffectCondition(nodeActorCT, "Unconscious") or
+		EffectManager35E.hasEffectCondition(nodeActorCT, "Incapacitated") or
+		EffectManager35E.hasEffectCondition (nodeActorCT, "Paralyzed") or
+		EffectManager35E.hasEffectCondition(nodeActorCT, "Petrified") or
+		EffectManager35E.hasEffectCondition(nodeActorCT, "Stunned") or
+		EffectManager35E.hasEffectCondition(nodeActorCT, "Helpless") then
 		return false;
 	end
 	
 	-- Actor is flat-footed and doesn't have Combat Reflexes
-	if EffectManager35E.hasEffectCondition(rActorCT, "Flatfooted") or
-		EffectManager35E.hasEffectCondition(rActorCT, "Flat-footed") then
-		if not hasFeat(rActorCT, "Combat Reflexes") then
+	if EffectManager35E.hasEffectCondition(nodeActorCT, "Flatfooted") or
+		EffectManager35E.hasEffectCondition(nodeActorCT, "Flat-footed") then
+		if not hasFeat(nodeActorCT, "Combat Reflexes") then
 			return false;
 		end
 	end
@@ -635,9 +635,9 @@ function checkCanThreaten(rActorCT, rTargetCT)
 	-- Target invisibility
 	-- I feel like something is missing here.  Tremorsense/scent?
 	-- Also, for NPC Truesight/Blindsight/etc. might not be an effect, just a sense
-	if EffectManager35E.hasEffectCondition(rTargetCT, "Invisible") then
-		if not EffectManager35E.hasEffectCondition(rActorCT, "Truesight") and
-			not EffectManager35E.hasEffectCondition(rActorCT, "Blindsight") then
+	if EffectManager35E.hasEffectCondition(nodeTargetCT, "Invisible") then
+		if not EffectManager35E.hasEffectCondition(nodeActorCT, "Truesight") and
+			not EffectManager35E.hasEffectCondition(nodeActorCT, "Blindsight") then
 			return false;
 		end
 	end
