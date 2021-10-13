@@ -6,24 +6,24 @@
 -->
 
 <root>
-
 	<windowclass name="modifierstack" merge="join">
 		<sheetdata>
-
 			<button_modifierkey name="DEF_PCOVER">
 				<bounds>80,4,40,20</bounds>
 				<textres>modifier_label_atkpcover</textres>
 				<state><tooltip>Partial Cover -2</tooltip></state>
 				<script>
 					function onValueChanged()
-						super.onValueChanged();
+						if super and super.onValueChanged then
+							super.onValueChanged();
+						end
 						if getValue() == 1 then
 							window["DEF_COVER"].setValue(0);
 							window["DEF_SCOVER"].setValue(0);
 						end
-					end					
+					end
 				</script>
-			</button_modifierkey>			
+			</button_modifierkey>
 
 			<button_modifierkey name="DEF_COVER">
 				<bounds>130,4,40,20</bounds>
@@ -31,7 +31,9 @@
 				<state><tooltip>Cover or Soft Cover -4</tooltip></state>
 				<script>
 					function onValueChanged()
-						super.onValueChanged();
+						if super and super.onValueChanged then
+							super.onValueChanged();
+						end
 						if getValue() == 1 then
 							window["DEF_PCOVER"].setValue(0);
 							window["DEF_SCOVER"].setValue(0);
@@ -39,14 +41,16 @@
 					end
 				</script>
 			</button_modifierkey>
-			
+
 			<button_modifierkey name="DEF_SCOVER">
 				<bounds>180,4,40,20</bounds>
 				<textres>modifier_label_atkscover</textres>
 				<state><tooltip>Superior Cover -8</tooltip></state>
 				<script>
 					function onValueChanged()
-						super.onValueChanged();
+						if super and super.onValueChanged then
+							super.onValueChanged();
+						end
 						if getValue() == 1 then
 							window["DEF_PCOVER"].setValue(0);
 							window["DEF_COVER"].setValue(0);
@@ -54,61 +58,68 @@
 					end
 				</script>
 			</button_modifierkey>
-		
+
 			<button_modifierkey name="DEF_CONC">
 				<state><tooltip>Target has Concealment from you</tooltip></state>
 				<bounds>230,4,40,20</bounds>
 				<textres>modifier_label_atkconc</textres>
 				<script>
 					function onValueChanged()
-						super.onValueChanged();
-						
+						if super and super.onValueChanged then
+							super.onValueChanged();
+						end
 						if getValue() == 1 then
 							window["DEF_TCONC"].setValue(0);
 						end
 					end
 				</script>
 			</button_modifierkey>
+
 			<button_modifierkey name="DEF_TCONC">
 				<bounds>280,4,40,20</bounds>
 				<state><tooltip>Target has Total Concealment from you</tooltip></state>
 				<textres>modifier_label_atktconc</textres>
 				<script>
 					function onValueChanged()
-						super.onValueChanged();
-						
+						if super and super.onValueChanged then
+							super.onValueChanged();
+						end
 						if getValue() == 1 then
 							window["DEF_CONC"].setValue(0);
 						end
 					end
 				</script>
 			</button_modifierkey>
+
 			<button_modifierkey name="DMG_CRIT">
 				<bounds>330,4,40,20</bounds>
 				<textres>modifier_label_dmgcrit</textres>
 				<state><tooltip>next damage roll counts as critical damage</tooltip></state>
 			</button_modifierkey>
-
 			<button_modifierkey name="DEF_MELEE">
 				<bounds>80,36,40,20</bounds>
 				<textres>modifier_label_atkmelee</textres>
 				<state><tooltip>Shooting Into Melee -4, target is engaged</tooltip></state>
-			</button_modifierkey>	
+			</button_modifierkey>
+
 			<button_modifierkey name="ATT_FLANK">
 				<bounds>130,36,40,20</bounds>
 				<textres>modifier_label_atkflank</textres>
 				<state><tooltip>Flanking +2</tooltip></state>
-			</button_modifierkey>			
+			</button_modifierkey>
+
 			<button_modifierkey name="ATT_FF">
 				<bounds>180,36,40,20</bounds>
 				<textres>modifier_label_atkff</textres>
 				<state><tooltip>Flat-Footed</tooltip></state>
-			</button_modifierkey>			
+			</button_modifierkey>
+
 			<button_modifierkey name="ATT_OPP">
 				<bounds>230,36,40,20</bounds>
 				<textres>modifier_label_atkopp</textres>
 				<state><tooltip>Attack of opportunity</tooltip></state>
 			</button_modifierkey>
+
 			<button_modifierkey name="ATT_TCH">
 				<bounds>280,36,40,20</bounds>
 				<textres>modifier_label_atktouch</textres>
@@ -119,9 +130,7 @@
 				<textres>modifier_label_dmghalf</textres>
 				<state><tooltip>next roll does half damage</tooltip></state>
 			</button_modifierkey>
-
 		</sheetdata>
 	</windowclass>
-
 </root>
 
