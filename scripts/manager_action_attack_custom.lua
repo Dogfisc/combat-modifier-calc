@@ -3,19 +3,21 @@
 -- attribution and copyright information.
 --
 
-
+local modAttack
 function onInit()
 	modAttack = ActionAttack.modAttack
 	ActionAttack.modAttack = modAttackCustom
 
 	ActionsManager.registerModHandler("attack", modAttackCustom);
 	ActionsManager.registerModHandler("grapple", modAttackCustom);
-	
-	OptionsManager.registerOption2('AUTO_FLANK', false, 'option_header_game', 'opt_lab_autoflank', 'option_entry_cycler', 
+
+	table.insert(DataCommon.immunetypes, "flanking")
+	table.insert(DataCommon.dmgtypes, "flanking")
+
+	OptionsManager.registerOption2('AUTO_FLANK', false, 'option_header_game', 'opt_lab_autoflank', 'option_entry_cycler',
 		{ labels = 'option_val_off', values = 'off', baselabel = 'option_val_on', baseval = 'on', default = 'on' })
 end
 
-local modAttack
 function modAttackCustom(rSource, rTarget, rRoll, ...)
 	
 	-- Debug.chat("rSource:  ", rSource);
@@ -110,8 +112,8 @@ function getRangeModifier(srcNode, rRoll, nRange)
 		-- weapon with better (or worse) range
 		for _,vWeaponNode in pairs(DB.getChildren(srcNode, "weaponlist")) do
 			local sWeaponName = DB.getValue(vWeaponNode, "name"):lower();
-			local sWeaponType = DB.getValue(vWeaponNode, "type");  -- 0 M; 1 R; 2 CMB
-			if sWeaponName == sWeaponUsed and sWeaponType == 1 then
+			local nWeaponType = DB.getValue(vWeaponNode, "type");  -- 0 M; 1 R; 2 CMB
+			if nWeaponType == 1 and (sWeaponName == sWeaponUsed) then
 				nRangeInc = DB.getValue(vWeaponNode, "rangeincrement");
 				-- Records imported from PCGen for melee weapons which can also be thrown have a
 				-- ranged attack called e.g. "Dagger (Thrown)" with no reference back to the inventory
@@ -119,19 +121,18 @@ function getRangeModifier(srcNode, rRoll, nRange)
 				if string.match(sWeaponName, "thrown") or string.match(sWeaponName, "bolas") then
 					nMaxInc = 5;
 					break;
+				elseif string.match(sWeaponName, "net") then
+					nMaxInc = 1;
+					break;
 				end
 				-- The weapon record does not include the item subtype, which we need to figure out
 				-- the maximum number of range increments.  For that, we need the inventory record.
 				local sClass, sRecordName = DB.getValue(vWeaponNode, "shortcut");
 				local vInvNode = DB.findNode(sRecordName);
 				if vInvNode ~= nil then
-					local sSubType = DB.getValue(vInvNode, "subtype");
-					if sSubType ~= nil then
-						if string.match(sSubType:lower(), "ranged") then
-							nMaxInc = 10;
-						else
-							nMaxInc = 5;
-						end
+					local sSubType = DB.getValue(vInvNode, "subtype", "");
+					if not string.match(sSubType:lower(), "ranged") then
+						nMaxInc = 5;
 					else
 						nMaxInc = 10;
 					end
@@ -407,7 +408,7 @@ function checkCanBeFlanked(rSource, rTarget)
 	--		true if rTarget can be flanked (for sneak attack) but ignores the +2 bonus (e.g. Formians)
 	
 	local bIgnoreFlank, bIgnoreBonus = false, true;
-	local bTgtPC = ActorManager.isPC(rTarget)
+	local bTgtPC = ActorManager.isPC(rTarget);
 	
 	-- subtype "swarm"
 	if bTgtPC == false then
@@ -422,8 +423,12 @@ function checkCanBeFlanked(rSource, rTarget)
 	-- "all-around vision" in "Senses" (Pathfinder Bestiary 2 Universal Monster Rules)
 	
 	-- "Immune ... flanking" in "SQ"
-	
-	-- "IMMUNE: ... flanking" effect
+	-- is converted to IMMUNE: flanking by adding "flanking" to DataCommon.immunetypes and DataCommon.dmgtypes.
+	-- "IMMUNE: ... flanking" effect is automated here
+	local aImmune = EffectManager35E.getEffectsBonusByType(rTarget, "IMMUNE", false, {}, rSource);
+	if aImmune["flanking"] then
+		return true, false;
+	end
 	
 	-- wearing Robe of Eyes or Ring of Eyes
 	
@@ -611,25 +616,25 @@ function hasFeat(actorNode, sFeat)
 	
 end
 
-function checkCanThreaten(rActorCT, rTargetCT)
+function checkCanThreaten(nodeActorCT, nodeTargetCT)
 	-- Returns true if the rActorCT can threaten enemies in melee;
 	-- false if they have a status or effect which renders them unable to do so or
 	-- they are unable to see the target
 	
 	-- Actor conditions
-	if EffectManager35E.hasEffectCondition(rActorCT, "Unconscious") or
-		EffectManager35E.hasEffectCondition(rActorCT, "Incapacitated") or
-		EffectManager35E.hasEffectCondition (rActorCT, "Paralyzed") or
-		EffectManager35E.hasEffectCondition(rActorCT, "Petrified") or
-		EffectManager35E.hasEffectCondition(rActorCT, "Stunned") or
-		EffectManager35E.hasEffectCondition(rActorCT, "Helpless") then
+	if EffectManager35E.hasEffectCondition(nodeActorCT, "Unconscious") or
+		EffectManager35E.hasEffectCondition(nodeActorCT, "Incapacitated") or
+		EffectManager35E.hasEffectCondition (nodeActorCT, "Paralyzed") or
+		EffectManager35E.hasEffectCondition(nodeActorCT, "Petrified") or
+		EffectManager35E.hasEffectCondition(nodeActorCT, "Stunned") or
+		EffectManager35E.hasEffectCondition(nodeActorCT, "Helpless") then
 		return false;
 	end
 	
 	-- Actor is flat-footed and doesn't have Combat Reflexes
-	if EffectManager35E.hasEffectCondition(rActorCT, "Flatfooted") or
-		EffectManager35E.hasEffectCondition(rActorCT, "Flat-footed") then
-		if not hasFeat(rActorCT, "Combat Reflexes") then
+	if EffectManager35E.hasEffectCondition(nodeActorCT, "Flatfooted") or
+		EffectManager35E.hasEffectCondition(nodeActorCT, "Flat-footed") then
+		if not hasFeat(nodeActorCT, "Combat Reflexes") then
 			return false;
 		end
 	end
@@ -637,14 +642,27 @@ function checkCanThreaten(rActorCT, rTargetCT)
 	-- Target invisibility
 	-- I feel like something is missing here.  Tremorsense/scent?
 	-- Also, for NPC Truesight/Blindsight/etc. might not be an effect, just a sense
-	if EffectManager35E.hasEffectCondition(rTargetCT, "Invisible") then
-		if not EffectManager35E.hasEffectCondition(rActorCT, "Truesight") and
-			not EffectManager35E.hasEffectCondition(rActorCT, "Blindsight") then
+	if EffectManager35E.hasEffectCondition(nodeTargetCT, "Invisible") then
+		if not EffectManager35E.hasEffectCondition(nodeActorCT, "Truesight") and
+			not EffectManager35E.hasEffectCondition(nodeActorCT, "Blindsight") then
 			return false;
 		end
 	end
 	
-	return true;
+	-- Melee weapon check
+	-- There should be some check here for the snap shot feat
+	-- https://www.aonprd.com/FeatDisplay.aspx?ItemName=Snap%20Shot
+	local rActorCT = ActorManager.resolveActor(nodeActorCT);
+	local nodeActor = ActorManager.getCreatureNode(nodeActorCT);
+	if ActorManager.isPC(rActorCT) then
+		for _,nodeWeapon in pairs(nodeActor.getChild('.weaponlist').getChildren()) do
+			if (DB.getValue(nodeWeapon, 'carried', 0) == 2) and (DB.getValue(nodeWeapon, 'type', 0) == 0) then
+				return true;
+			end
+		end
+	else
+		return true;
+	end
 	
 end
 
