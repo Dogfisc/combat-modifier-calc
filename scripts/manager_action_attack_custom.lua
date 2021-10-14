@@ -118,11 +118,11 @@ function getRangeModifier(srcNode, rRoll, nRange)
 				-- Records imported from PCGen for melee weapons which can also be thrown have a
 				-- ranged attack called e.g. "Dagger (Thrown)" with no reference back to the inventory
 				-- Bolas are just a wierd case because they are "martial ranged" but thrown
-				if string.match(sWeaponName, "thrown") or string.match(sWeaponName, "bolas") then
-					nMaxInc = 5;
-					break;
-				elseif string.match(sWeaponName, "net") then
+				if string.match(sWeaponName, "net") then
 					nMaxInc = 1;
+					break;
+				elseif string.match(sWeaponName, "thrown") or string.match(sWeaponName, "bolas") then
+					nMaxInc = 5;
 					break;
 				end
 				-- The weapon record does not include the item subtype, which we need to figure out
