@@ -7,8 +7,8 @@
 
 <root>
 	<!-- Modifiers -->
-	<string name="modifier_label_atkflank">Flank</string>
-	<string name="modifier_label_atkmelee">Melee</string>
+	<string name="modifier_label_ATT_FLANK">Flank</string>
+	<string name="modifier_label_ATT_MELEE">Melee</string>
 	<!-- Options -->
 	<string name="opt_lab_autoflank">Automatic Flanking</string>
 </root>
