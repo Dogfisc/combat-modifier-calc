@@ -670,9 +670,12 @@ function npcHasFeat(ctNode, sFeat)
 	
 	local sLowerFeat = StringManager.trim(string.lower(sFeat));
 	local sFeatList = DB.getValue(ctNode, "feats");
-	local sLowerFeatList = StringManager.trim(string.lower(sFeatList));
-
-	return string.match(sLowerFeatList, sLowerFeat);
+	
+	if sFeatList then
+		return string.match(StringManager.trim(string.lower(sFeatList)), sLowerFeat);
+	end
+	
+	return false
 	
 end
 
