@@ -222,7 +222,7 @@ function checkShootMelee(rSource, srcNode, rTarget)
 	
 	-- shotX, shotY:  x,y of the targetted grid square, i.e. the closest grid containing the target
 	local tgtSpace = DB.getValue(ActorManager.getCTNode(rTarget), "space");
-	local tgtSize = ActorManager35E.getSize(rTarget);
+	local tgtSize = ActorCommonManager.getCreatureSizeFromTypeFieldCore(rTarget);
 	local tgtCoord = {};
 	if tgtSpace <= 5 then
 		tgtCoord.x, tgtCoord.y = tgtToken.getPosition();
@@ -237,7 +237,7 @@ function checkShootMelee(rSource, srcNode, rTarget)
 	for _,checkToken in pairs(adjTokens) do
 		if checkToken ~= srcToken and checkToken ~= tgtToken then
 			local adjActor = CombatManager.getCTFromToken(checkToken);
-			local adjSize = ActorManager35E.getSize(adjActor);
+			local adjSize = ActorCommonManager.getCreatureSizeFromTypeFieldCore(adjActor);
 			-- Ignore adj of -2 or smaller, as they do not threaten outside their square
 			if adjSize > -2 then
 				local adjFaction = DB.getValue(adjActor, "friendfoe");
@@ -461,7 +461,7 @@ function getMeleeThreats(srcToken, tgtToken, sSourceFaction)
 		local rNearActorCT = CombatManager.getCTFromToken(checkToken);
 		-- Debug.chat("rNearActorCT:  ", rNearActorCT, DB.getValue(ActorManager.getCTNode(rNearActorCT), "name"));
 		if rNearActorCT then
-			local nNearSize = ActorManager35E.getSize(rNearActorCT);
+			local nNearSize = ActorCommonManager.getCreatureSizeFromTypeFieldCore(rNearActorCT);
 			local nNearReach = DB.getValue(ActorManager.getCTNode(rNearActorCT), "reach");
 			-- Ignore if threat is self
 			if checkToken ~= srcToken then
