@@ -257,7 +257,7 @@ function checkShootMelee(rSource, srcNode, rTarget)
 				-- -2 if the target is two size categories larger than adjacent friendly
 				-- no penalty if target 3+ sizes larger than adjacent friendly
 				if bCheck and checkCanThreaten(adjActor, rTarget.sCTNode) then
-					nSizeDiff = tgtSize - adjSize;
+					local nSizeDiff = tgtSize - adjSize;
 					if nSizeDiff < 2 then
 						return -4;
 					elseif nSizeDiff == 2 then
