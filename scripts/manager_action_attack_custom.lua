@@ -90,7 +90,7 @@ function getRangeToTarget(rSource, rTarget)
 	-- Returns the range from source to target
 	
 	-- are we on a gridded map?
-	local srcToken, tgtToken, srcImage, tgtImage = getTokensMaps(rSource, rTarget);
+	local srcToken, tgtToken = getTokensMaps(rSource, rTarget);
 	if srcToken == nil then
 		return -1;
 	end
@@ -101,7 +101,7 @@ end
 
 function getRangeModifier(rSource, rRoll, nRange)
 	-- Get the range penalty based on the distance to target and weapon used
-	
+
 	local srcNode = rSource.sCreatureNode;
 
 	-- Get the name of the weapon being used
@@ -129,7 +129,7 @@ function getRangeModifier(rSource, rRoll, nRange)
 				end
 				-- The weapon record does not include the item subtype, which we need to figure out
 				-- the maximum number of range increments.  For that, we need the inventory record.
-				local sClass, sRecordName = DB.getValue(vWeaponNode, "shortcut");
+				local _, sRecordName = DB.getValue(vWeaponNode, "shortcut");
 				local vInvNode = DB.findNode(sRecordName);
 				if vInvNode ~= nil then
 					local sSubType = DB.getValue(vInvNode, "subtype", "");
@@ -173,7 +173,7 @@ function getRangeModifier(rSource, rRoll, nRange)
 			nMaxInc = tWeaponRangeData[2];
 		end
 	end
-	
+
 	if nMaxInc == 0 or nRangeInc == 0 then
 		-- Weapon wasn't found.  Maybe it is a spell or special ability?
 		if hasSpell(srcNode, sWeaponUsed) then
@@ -181,14 +181,13 @@ function getRangeModifier(rSource, rRoll, nRange)
 		end
 		-- Give a warning in Chat
 		local tMsg = {sender = "", font = "emotefont", mood = "ooc"};
-		local nMaxRange = nMaxInc * nRangeInc;
 		tMsg.text = "Weapon " .. sWeaponUsed .. " not found";
 		Comm.deliverChatMessage(tMsg);
 		return 0;
 	end
-	
+
 	local nInc = math.ceil(nRange / nRangeInc);
-	
+
 	-- Issue warning if beyond maximum range
 	if nInc > nMaxInc then
 		local tMsg = {sender = rSource.sName, font = "emotefont", mood = "ooc"};
@@ -196,13 +195,13 @@ function getRangeModifier(rSource, rRoll, nRange)
 		tMsg.text = "Range " .. nRange .. " is beyond the " .. sWeaponUsed .. "'s maximum of " .. nMaxRange;
 		Comm.deliverChatMessage(tMsg);
 	end
-	
+
 	local nRngMod = -2;
 	if hasFeat(srcNode, "Far Shot") then
 		nRngMod = -1;
 	end
 	return (nInc - 1) * nRngMod;
-	
+
 end
 
 function checkShootMelee(rSource, srcNode, rTarget)
@@ -242,7 +241,7 @@ function checkShootMelee(rSource, srcNode, rTarget)
 		tgtCoord.x, tgtCoord.y = tgtToken.getPosition();
 	else
 		-- figure out which square of the target is closest to source
-		tgtCoord.x, tgtCoord.y = getClosestTargetSquare(rTarget, srcToken, tgtToken, tgtSpace, tgtImage);
+		tgtCoord.x, tgtCoord.y = getClosestTargetSquare(rTarget, srcToken, tgtToken, tgtImage);
 	end
 	
 	local adjTokens = srcImage.getTokensWithinDistance({x=tgtCoord.x, y=(tgtCoord.y * -1)}, 5);
@@ -284,7 +283,7 @@ function checkShootMelee(rSource, srcNode, rTarget)
 	
 end
 
-function getClosestTargetSquare(rTarget, srcToken, tgtToken, tgtSpace, tgtImage)
+function getClosestTargetSquare(rTarget, srcToken, tgtToken, tgtImage)
 	-- return the X,Y of the center of the closest square of tgtToken from srcToken
 	
 	local tgtEdges = getTokenEdgeSquares(rTarget, tgtToken, tgtImage)
@@ -332,7 +331,7 @@ function checkFlanked(rSource, srcNode, rTarget)
 	if OptionsManager.isOption('AUTO_FLANK', 'on') then
 		-- Some creatures can't be flanked; some can be flanked (for purposes of Sneak Attack) but
 		-- ignore the +2 bonus
-		local bIgnoreFlank, bIgnoreBonus = checkCanBeFlanked(rSource, rTarget);
+		local bIgnoreFlank = checkCanBeFlanked(rSource, rTarget);
 		if bIgnoreFlank then
 			return false;
 		end
@@ -427,7 +426,7 @@ function checkCanBeFlanked(rSource, rTarget)
 	-- subtype "swarm"
 	if bTgtPC == false then
 		local vTgtNode = ActorManager.getCreatureNode(rTarget);
-		local sTgtType = DB.getValue(vTgtNode, "type");
+		-- local sTgtType = DB.getValue(vTgtNode, "type");
 		-- Debug.chat("sTgtType:  ", sTgtType);
 		if string.match(DB.getValue(vTgtNode, "type"):lower(), "swarm") then
 			return true, false;
@@ -475,7 +474,7 @@ function getMeleeThreats(srcToken, tgtToken, sSourceFaction)
 		local rNearActorCT = CombatManager.getCTFromToken(checkToken);
 		-- Debug.chat("rNearActorCT:  ", rNearActorCT, DB.getValue(ActorManager.getCTNode(rNearActorCT), "name"));
 		if rNearActorCT then
-			local nNearSize = ActorCommonManager.getCreatureSizeFromTypeFieldCore(rNearActorCT);
+			--local nNearSize = ActorCommonManager.getCreatureSizeFromTypeFieldCore(rNearActorCT);
 			local nNearReach = DB.getValue(ActorManager.getCTNode(rNearActorCT), "reach");
 			-- Ignore if threat is self
 			if checkToken ~= srcToken then
@@ -563,7 +562,7 @@ function getTokenBounds(rActor, theToken, tknImage)
 	
 	local nGrid = GameSystem.getDistanceUnitsPerGrid(); -- for 3.5E this is 5
 	local nGridSize = tknImage.getGridSize();  -- usually 50
-	local nHalfGrid = nGridSize / 2;
+	--local nHalfGrid = nGridSize / 2;
 	local tgtSide = tgtSpace / nGrid;  -- number of squares per side of the target token
 	
 	return {
