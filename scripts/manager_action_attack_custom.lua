@@ -55,7 +55,7 @@ function modAttackCustom(rSource, rTarget, rRoll, ...)
 		removeEffect(srcCTnode, "Flanking");
 		if rTarget ~= nil then
 			-- Check range modifier
-			local nRangeMod = getRangeModifier(srcNode, rRoll, nRange);
+			local nRangeMod = getRangeModifier(rSource, rRoll, nRange);
 			if nRangeMod < 0 then
 				rRoll.sDesc = rRoll.sDesc .. " " .. "[RANGE " .. nRangeMod .."]";
 				rRoll.nMod = rRoll.nMod + nRangeMod;
@@ -99,9 +99,11 @@ function getRangeToTarget(rSource, rTarget)
 	
 end
 
-function getRangeModifier(srcNode, rRoll, nRange)
+function getRangeModifier(rSource, rRoll, nRange)
 	-- Get the range penalty based on the distance to target and weapon used
 	
+	local srcNode = rSource.sCreatureNode;
+
 	-- Get the name of the weapon being used
 	local sWeaponUsed = string.match(rRoll.sDesc, "%]([^%[]*)");
 	sWeaponUsed = StringManager.trim(sWeaponUsed):lower();
