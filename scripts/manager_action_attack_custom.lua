@@ -179,7 +179,7 @@ function getRangeModifier(rSource, rRoll, nRange)
 	
 	-- Issue warning if beyond maximum range
 	if nInc > nMaxInc then
-		local tMsg = {sender = "", font = "emotefont", mood = "ooc"};
+		local tMsg = {sender = rSource.sName, font = "emotefont", mood = "ooc"};
 		local nMaxRange = nMaxInc * nRangeInc;
 		tMsg.text = "Range " .. nRange .. " is beyond the " .. sWeaponUsed .. "'s maximum of " .. nMaxRange;
 		Comm.deliverChatMessage(tMsg);
