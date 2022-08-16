@@ -102,7 +102,7 @@ end
 function getRangeModifier(rSource, rRoll, nRange)
 	-- Get the range penalty based on the distance to target and weapon used
 
-	local srcNode = rSource.sCreatureNode;
+	local srcNode = ActorManager.getCreatureNode(rSource);
 
 	-- Get the name of the weapon being used
 	local sWeaponUsed = string.match(rRoll.sDesc, "%]([^%[]*)");
