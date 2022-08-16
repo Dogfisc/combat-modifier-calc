@@ -146,7 +146,7 @@ function getRangeModifier(rSource, rRoll, nRange)
 		-- For an NPC, get the standard range data for the weapon type
 		-- Check for a match against the weapon data
 		local tWeaponRangeData = DataCommonCMC.weaponranges[sWeaponUsed];
-		if tWeaponRangeData == nil then
+		if not tWeaponRangeData then
 			-- It wasn't found; check for a match vs each entry in the
 			-- data table in case this weapon has additional words (Mwk, silver, etc.)
 			for sWeaponName, tWeaponRangeData in pairs(DataCommonCMC.weaponranges) do
@@ -154,6 +154,18 @@ function getRangeModifier(rSource, rRoll, nRange)
 					nRangeInc = tWeaponRangeData[1];
 					nMaxInc = tWeaponRangeData[2];
 					break;
+				end
+			end
+			-- It still wasn't found; check for rSource.nodeWeapon (from Advanced Effects).
+			-- If found, get range increment from the item record.
+			if nRangeInc == 0 and nMaxInc == 0 then
+				if rSource.nodeWeapon then
+					local nodeWeapon = DB.findNode(rSource.nodeWeapon)
+					if nodeWeapon then
+						nRangeInc = DB.getValue(nodeWeapon, 'range', 0);
+						nMaxInc = 10;
+						Debug.console(Interface.getString('cmc_nomaxrangeinc_ae'))
+					end
 				end
 			end
 		else

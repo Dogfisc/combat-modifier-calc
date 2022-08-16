@@ -11,4 +11,6 @@
 	<string name="modifier_label_ATT_MELEE">Melee</string>
 	<!-- Options -->
 	<string name="opt_lab_autoflank">Automatic Flanking</string>
+	<!-- Debug Console -->
+	<string name="cmc_nomaxrangeinc_ae">Getting range increment from Advanced Effects; max range increment unavailable. Assuming 10.</string>
 </root>
