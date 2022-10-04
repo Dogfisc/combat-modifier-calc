@@ -7,6 +7,7 @@
 -- [weapon name] = {range increment, maximumm range increments}
 weaponranges = {
 	["blowgun"] = {20, 10},
+	["bolas"] = {10, 5},
 	["bola"] = {10, 5},
 	["club"] = {10, 5},
 	["composite longbow"] = {110, 10},
