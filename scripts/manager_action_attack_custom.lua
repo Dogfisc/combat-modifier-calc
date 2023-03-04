@@ -61,8 +61,13 @@ function modAttackCustom(rSource, rTarget, rRoll, ...)
 				rRoll.nMod = rRoll.nMod + nRangeMod;
 			end
 			
-			-- Check and add shooting into melee modifier
-			local nShootMeleeMod = checkShootMelee(rSource, srcNode, rTarget);
+			-- Check and add shooting into melee modifiermodifier
+			local nShootMeleeMod
+			if ModifierStack.getModifierKey("DEF_MELEE") then
+				nShootMeleeMod = -4
+			else
+				nShootMeleeMod = checkShootMelee(rSource, srcNode, rTarget)
+			end
 			if nShootMeleeMod < 0 then
 				rRoll.sDesc = rRoll.sDesc .. " " .. "[SHOOT MELEE " .. nShootMeleeMod .."]";
 				rRoll.nMod = rRoll.nMod + nShootMeleeMod;
@@ -231,7 +236,7 @@ function checkShootMelee(rSource, srcNode, rTarget)
 		tgtCoord.x, tgtCoord.y = getClosestTargetSquare(rTarget, srcToken, tgtToken, tgtSpace, tgtImage);
 	end
 	
-	local adjTokens = srcImage.getTokensWithinDistance({x=tgtCoord.x, y=(tgtCoord.y * -1)}, 5);
+	local adjTokens = srcImage.getTokensWithinDistance({x=tgtCoord.x, y=(tgtCoord.y)}, 5);
 	local srcFaction = DB.getValue(ActorManager.getCTNode(rSource), "friendfoe");
 	local nPenalty = 0
 	for _,checkToken in pairs(adjTokens) do
@@ -341,10 +346,7 @@ function checkFlanked(rSource, srcNode, rTarget)
 		local tgtY = (tTgtBnd.top + tTgtBnd.bottom) / 2;
 
 		-- Get the squares around the edge of rSource
-		local tSrcEdge = getTokenEdgeSquares(rSource, srcToken, srcImage);
-		
-		-- Is the Token Height extension loaded?
-		local bTknHgtLoaded = isTokenHeightLoaded()
+		local tSrcEdge = getTokenEdgeSquares(rSource, srcToken, srcImage)
 
 		for _, tknThreat in pairs(tThreats) do
 			-- Get edge squares of tknThreat
@@ -356,7 +358,7 @@ function checkFlanked(rSource, srcNode, rTarget)
 					-- Is this square of the threat token actually a threat?
 					local rThrCT = CombatManager.getCTFromToken(tknThreat);
 					local nThrReach = DB.getValue(ActorManager.getCTNode(rThrCT), "reach")
-					local nThrRange = getThreatRange(srcImage, thrCoord, tgtToken, bTknHgtLoaded)
+					local nThrRange = getThreatRange(srcImage, thrCoord, tgtToken)
 					if nThrReach >= nThrRange then
 						-- y = mx + b
 						-- m = slope = delta Y / delta X
@@ -761,21 +763,6 @@ function hasSpell(actorNode, sSpell)
 	
 end
 
-function isTokenHeightLoaded()
-	for _, sExtName in pairs(Extension.getExtensions()) do
-		if sExtName == "Token Height" then
-			return true
-		end
-	end
-	return false
-end
-
-function getThreatRange(srcImage, thrCoord, tgtToken, bTknHgtLoaded)
-	-- Token Height overrides getDistanceBetween and throws off the following calculation.
-	-- Only negate the y value if it is not loaded.
-	if bTknHgtLoaded then
-		return srcImage.getDistanceBetween({x = thrCoord.x, y = thrCoord.y}, tgtToken)
-	else
-		return srcImage.getDistanceBetween({x = thrCoord.x, y = thrCoord.y * -1}, tgtToken)
-	end
+function getThreatRange(srcImage, thrCoord, tgtToken)
+	return srcImage.getDistanceBetween({x = thrCoord.x, y = thrCoord.y}, tgtToken)
 end
