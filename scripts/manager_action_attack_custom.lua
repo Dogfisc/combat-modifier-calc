@@ -420,7 +420,9 @@ function checkCanBeFlanked(rSource, rTarget)
 		local vTgtNode = ActorManager.getCreatureNode(rTarget);
 		local sTgtType = DB.getValue(vTgtNode, "type");
 		-- Debug.chat("sTgtType:  ", sTgtType);
-		if string.match(DB.getValue(vTgtNode, "type"):lower(), "swarm") then
+		if sTgtType == nil then
+			Debug.chat("Target 'type' returns nil")
+		elseif string.match((sTgtType):lower(), "swarm") then
 			return true, false;
 		end
 	end
