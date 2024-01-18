@@ -475,13 +475,19 @@ function getMeleeThreats(srcToken, tgtToken, sSourceFaction)
 				-- Ignore if reach < than range (this will include size -2 or less, as their reach is 0)
 				local nNearRange = Token.getDistanceBetween(tgtToken, checkToken);
 				-- Debug.chat("nNearRange, nNearReach, nNearSize:  ", nNearRange, nNearReach, nNearSize);
-				if nNearRange <= nNearReach then
-					-- Ignore if faction is not the same as source's faction
-					local sNearFaction = DB.getValue(rNearActorCT, "friendfoe");
-					if sNearFaction == sSourceFaction then
-						-- Make sure the near actor can threaten
-						if checkCanThreaten(rNearActorCT, CombatManager.getCTFromToken(tgtToken)) then
-							table.insert(tThreats, checkToken);
+				if nNearRange == nil then
+					Debug.chat("missing range to:  ", rNearActorCT, DB.getValue(ActorManager.getCTNode(rNearActorCT), "name"))
+				elseif nNearReach == nil then
+					Debug.chat("missing reach for:  ", rNearActorCT, DB.getValue(ActorManager.getCTNode(rNearActorCT), "name"))
+				else
+					if nNearRange <= nNearReach then
+						-- Ignore if faction is not the same as source's faction
+						local sNearFaction = DB.getValue(rNearActorCT, "friendfoe");
+						if sNearFaction == sSourceFaction then
+							-- Make sure the near actor can threaten
+							if checkCanThreaten(rNearActorCT, CombatManager.getCTFromToken(tgtToken)) then
+								table.insert(tThreats, checkToken);
+							end
 						end
 					end
 				end
